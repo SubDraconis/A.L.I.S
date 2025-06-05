@@ -1,7 +1,7 @@
 from przedmioty import wyswietl_info_przedmiotu, przedmioty_info
 
 class Postac:
-    def __init__(self, imie, typ, sila, zrecznosc, inteligencja, charyzma, lvl=1, gatunek=None):
+    def __init__(self, imie, typ, sila, zrecznosc, inteligencja, charyzma, lvl=1, gatunek=None, x=0, y=0):
         self.imie = imie
         self.typ = typ
         self.sila = sila
@@ -11,14 +11,15 @@ class Postac:
         self.ekwipunek = []
         self.lvl = lvl
         self.gatunek = gatunek
+        self.x = x
+        self.y = y
 
     def __str__(self):
-        base_info = f"{self.typ}: {self.imie}, Poziom: {self.lvl}, Siła: {self.sila}, Zręczność: {self.zrecznosc}, Inteligencja: {self.inteligencja}, Charyzma: {self.charyzma}"
+        base_info = f"{self.typ}: {self.imie}, Poziom: {self.lvl}, Siła: {self.sila}, Zręczność: {self.zrecznosc}, Inteligencja: {self.inteligencja}, Charyzma: {self.charyzma}, Pozycja: ({self.x}, {self.y})"
         if self.gatunek:
             base_info += f", Gatunek: {self.gatunek}"
         return base_info
 
-# Słownik mapujący nazwy postaci na typy
 postacie_map = {
     "paladyn": lambda imie, sila, zrecznosc, inteligencja, charyzma, lvl=1: 
         Postac(imie, "Paladyn", sila, zrecznosc, inteligencja, charyzma, lvl),
@@ -34,9 +35,9 @@ postacie_map = {
         Postac(imie, "Wróg", sila, zrecznosc, inteligencja, charyzma, lvl, gatunek)
 }
 
-# Domyślne wartości dla klas (bez zmian)
 class_defaults = {
     "paladyn": {
+        "typ": "Paladyn",
         "sila": 16,
         "zrecznosc": 12,
         "inteligencja": 10,
@@ -44,6 +45,7 @@ class_defaults = {
         "ekwipunek": ["Miecz", "Tarcza", "Zbroja płytowa", "Symbol święty"]
     },
     "wojownik": {
+        "typ": "Wojownik",
         "sila": 18,
         "zrecznosc": 14,
         "inteligencja": 8,
@@ -51,6 +53,7 @@ class_defaults = {
         "ekwipunek": ["Topór bojowy", "Zbroja łańcuchowa", "Tarcza"]
     },
     "mag": {
+        "typ": "Mag",
         "sila": 8,
         "zrecznosc": 12,
         "inteligencja": 18,
@@ -58,10 +61,19 @@ class_defaults = {
         "ekwipunek": ["Różdżka", "Księga zaklęć", "Szaty maga"]
     },
     "mieszany": {
+        "typ": "Mieszany",
         "sila": 14,
         "zrecznosc": 14,
         "inteligencja": 14,
         "charyzma": 12,
         "ekwipunek": ["Miecz krótki", "Lekka zbroja", "Księga zaklęć"]
+    },
+    "npc": {
+        "typ": "NPC",
+        "sila": 10,
+        "zrecznosc": 10,
+        "inteligencja": 10,
+        "charyzma": 10,
+        "ekwipunek": []
     }
 }

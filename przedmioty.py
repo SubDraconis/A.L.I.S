@@ -1,4 +1,3 @@
-# Słownik przedmiotów i ich statystyk
 przedmioty_info = {
     "Miecz": {
         "typ": "broń",
@@ -80,7 +79,6 @@ przedmioty_info = {
     }
 }
 
-# Modyfikacja wyświetlania informacji o ekwipunku
 def wyswietl_info_przedmiotu(nazwa_przedmiotu):
     info = przedmioty_info.get(nazwa_przedmiotu, {})
     if info:
