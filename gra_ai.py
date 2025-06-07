@@ -1,71 +1,36 @@
+# Gra AI - Prosty symulator gry z AI
+#--- Importy ---
 import random
 import Postacie as p
 import funkcje
 import mapy
 import ai
 
-class AICharacter:
-    def __init__(self, imie, typ, sila, zrecznosc, inteligencja, charyzma, lvl, gatunek, agent):
-        self.imie = imie
-        self.typ = typ
-        self.sila = sila
-        self.zrecznosc = zrecznosc
-        self.inteligencja = inteligencja
-        self.charyzma = charyzma
-        self.ekwipunek = []
-        self.lvl = lvl
-        self.gatunek = gatunek
-        self.x = 0
-        self.y = 0
-        self.agent = agent
-
-    def __str__(self):
-        return f"{self.typ}: {self.imie}, Poziom: {self.lvl}, Siła: {self.sila}, Zręczność: {self.zrecznosc}, Inteligencja: {self.inteligencja}, Charyzma: {self.charyzma}, Pozycja: ({self.x}, {self.y})"
-
-    @staticmethod
-    def ai_wybiera_postac():
-        dostepne_postacie = [klasa for klasa in p.postacie_map.keys() if klasa != "npc"]
-        wybrana_nazwa_postaci = random.choice(dostepne_postacie)
-        defaults = p.class_defaults[wybrana_nazwa_postaci]
-        imie = "AI_" + wybrana_nazwa_postaci
-        Wybrana_klasa = p.postacie_map[wybrana_nazwa_postaci]
-        szerokosc_mapy = 40
-        wysokosc_mapy = 20
-        agent = ai.QLearningAgent(states=szerokosc_mapy * wysokosc_mapy, actions=4)
-
-        postac = AICharacter(
-            imie=imie,
-            typ=defaults["typ"],
-            sila=defaults["sila"],
-            zrecznosc=defaults["zrecznosc"],
-            inteligencja=defaults["inteligencja"],
-            charyzma=defaults["charyzma"],
-            lvl = 1,
-            gatunek = None,
-            agent = agent
-        )
-        postac.ekwipunek = defaults["ekwipunek"].copy()
-        return postac
-
+# Funkcja do obliczania stanu na podstawie współrzędnych
 def get_state(x, y, szerokosc_mapy, wysokosc_mapy):
     return y * szerokosc_mapy + x
 
+# Funkcja do określania nagrody na podstawie terenu
 def get_reward(mapa, x, y):
     if mapa[y][x] == mapy.TERRAIN_ID["Wioska"]:
         return 10
     else:
         return -1
 
+# Główna funkcja gry
 def start_game(postac):
-    ai_postac = AICharacter.ai_wybiera_postac()
+    # AI wybiera postać
+    ai_postac = p.AICharacter.ai_wybiera_postac()
     print("\nAI wybrało postać:")
     print(ai_postac)
     print(f"Ekwipunek: {', '.join(ai_postac.ekwipunek)}")
 
+    # Generowanie mapy
     szerokosc_mapy = 40
     wysokosc_mapy = 20
     mapa = mapy.generuj_mape(szerokosc_mapy, wysokosc_mapy)
 
+    # Ustawienie początkowych pozycji postaci
     postac.x = 5
     postac.y = 5
     ai_postac.x = 10
@@ -73,22 +38,28 @@ def start_game(postac):
 
     print("\nRozpoczyna się gra...")
     while True:
+        # Wyświetlanie mapy i informacji o postaciach
         mapy.wyswietl_mape(mapa, postac, ai_postac)
         print(postac)
         print(ai_postac)
 
+        # Pobieranie ruchu od gracza
         kierunek = input("\nPodaj kierunek ruchu (góra, dół, lewo, prawo, koniec): ").lower()
         if kierunek == "koniec":
             break
 
+        # Wykonanie ruchu gracza
         funkcje.porusz_sie(postac, mapa, kierunek)
 
+        # Określenie stanu AI
         state = get_state(ai_postac.x, ai_postac.y, szerokosc_mapy, wysokosc_mapy)
+        # Wybór akcji przez AI
         action = ai_postac.agent.choose_action(state)
 
+        # Określenie nowego stanu AI
         new_state = get_state(ai_postac.x, ai_postac.y, szerokosc_mapy, wysokosc_mapy)
-        reward = get_reward(mapa, ai_postac.x, ai_postac.y)
-
+        # Ustalenie nagrody
+        reward = 0
         if action == 0:
             ai_kierunek = "góra"
         elif action == 1:
@@ -97,9 +68,38 @@ def start_game(postac):
             ai_kierunek = "lewo"
         elif action == 3:
             ai_kierunek = "prawo"
+        # Losowanie wroga
+        Wroga=funkcje.losowanie_wroga(ai_postac.x, ai_postac.y, mapa)
+        if Wroga:
+            print(f"\nNapotkałeś wroga: {Wroga.imie}")
+            funkcje.atakuj(postac, Wroga)
+        # Poruszanie się AI
         funkcje.porusz_sie(ai_postac, mapa, ai_kierunek)
-
+        funkcje.losowanie_wroga(ai_postac.x, ai_postac.y, mapa)
+        if Wroga:
+            print(f"\nAI napotkało wroga: {Wroga.imie}")
+            ai_action = ai_postac.agent.choose_action(state)
+            if ai_action == 0:
+                print("AI atakuje!")
+                wynik_walki = funkcje.atakuj(ai_postac, Wroga)
+                if wynik_walki == "wygrana":
+                    reward = 10
+                elif wynik_walki == "przegrana":
+                    reward = -10
+                else:
+                    reward = 1
+            elif ai_action == 1:
+                print("AI próbuje przekonać!")
+                reward = 5
+            elif ai_action == 2:
+                print("AI ucieka!")
+                reward = -2
+        # Uczenie się AI
         ai_postac.agent.learn(state, action, reward, new_state)
-
         if postac.lvl <= 0 or ai_postac.lvl <= 0:
             break
+
+# Uruchomienie gry
+if __name__ == "__main__":
+    postac = p.AICharacter.ai_wybiera_postac()
+    start_game(postac)

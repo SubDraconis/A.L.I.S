@@ -1,89 +1,24 @@
+# Słownik z informacjami o przedmiotach
 przedmioty_info = {
-    "Miecz": {
-        "typ": "broń",
-        "obrażenia": 8,
-        "waga": 3,
-        "wartość": 15,
-        "wymagana_siła": 10
-    },
-    "Tarcza": {
-        "typ": "obrona",
-        "obrona": 2,
-        "waga": 6,
-        "wartość": 10,
-        "wymagana_siła": 8
-    },
-    "Zbroja płytowa": {
-        "typ": "pancerz",
-        "obrona": 8,
-        "waga": 20,
-        "wartość": 50,
-        "wymagana_siła": 15
-    },
-    "Symbol święty": {
-        "typ": "święty",
-        "moc_zaklęć": 2,
-        "waga": 1,
-        "wartość": 25,
-        "wymagana_wiara": 10
-    },
-    "Topór bojowy": {
-        "typ": "broń",
-        "obrażenia": 10,
-        "waga": 4,
-        "wartość": 20,
-        "wymagana_siła": 12
-    },
-    "Zbroja łańcuchowa": {
-        "typ": "pancerz",
-        "obrona": 5,
-        "waga": 15,
-        "wartość": 30,
-        "wymagana_siła": 12
-    },
-    "Różdżka": {
-        "typ": "broń magiczna",
-        "obrażenia_magiczne": 6,
-        "waga": 1,
-        "wartość": 30,
-        "wymagana_inteligencja": 12
-    },
-    "Księga zaklęć": {
-        "typ": "magiczny",
-        "moc_zaklęć": 4,
-        "waga": 2,
-        "wartość": 40,
-        "wymagana_inteligencja": 14
-    },
-    "Szaty maga": {
-        "typ": "pancerz magiczny",
-        "obrona": 3,
-        "obrona_magiczna": 5,
-        "waga": 4,
-        "wartość": 35,
-        "wymagana_inteligencja": 10
-    },
-    "Miecz krótki": {
-        "typ": "broń",
-        "obrażenia": 6,
-        "waga": 2,
-        "wartość": 10,
-        "wymagana_siła": 8
-    },
-    "Lekka zbroja": {
-        "typ": "pancerz",
-        "obrona": 4,
-        "waga": 10,
-        "wartość": 20,
-        "wymagana_siła": 10
-    }
+    "Miecz": {"typ": "Broń", "obrażenia": "1k6"},
+    "Tarcza": {"typ": "Pancerz", "pancerz": 2},
+    "Zbroja płytowa": {"typ": "Pancerz", "pancerz": 6},
+    "Symbol święty": {"typ": "Przedmiot", "opis": "Używany przez Paladynów"},
+    "Topór bojowy": {"typ": "Broń", "obrażenia": "1k10"},
+    "Zbroja łańcuchowa": {"typ": "Pancerz", "pancerz": 4},
+    "Różdżka": {"typ": "Broń", "obrażenia": "1k4", "magia": True},
+    "Księga zaklęć": {"typ": "Przedmiot", "magia": True},
+    "Szaty maga": {"typ": "Pancerz", "pancerz": 1, "magia": True},
+    "Miecz krótki": {"typ": "Broń", "obrażenia": "1k6"},
+    "Lekka zbroja": {"typ": "Pancerz", "pancerz": 3}
 }
 
+# Funkcja do wyświetlania informacji o przedmiocie
 def wyswietl_info_przedmiotu(nazwa_przedmiotu):
-    info = przedmioty_info.get(nazwa_przedmiotu, {})
-    if info:
-        print(f"\n{nazwa_przedmiotu}:")
+    if nazwa_przedmiotu in przedmioty_info:
+        info = przedmioty_info[nazwa_przedmiotu]
+        print(f"  {nazwa_przedmiotu}:")
         for atrybut, wartosc in info.items():
-            print(f"- {atrybut}: {wartosc}")
+            print(f"    - {atrybut}: {wartosc}")
     else:
-        print(f"Przedmiot '{nazwa_przedmiotu}' nie istnieje w ekwipunku.")
+        print(f"  Nieznany przedmiot: {nazwa_przedmiotu}")
