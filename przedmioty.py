@@ -1,16 +1,25 @@
 # Słownik z informacjami o przedmiotach
 przedmioty_info = {
     "Miecz": {"typ": "Broń", "obrażenia": "1k6"},
-    "Tarcza": {"typ": "Pancerz", "pancerz": 2},
-    "Zbroja płytowa": {"typ": "Pancerz", "pancerz": 6},
+    "Tarcza": {"typ": "Tarcza", "pancerz": 2},
+    "Hełm płytowy": {"typ": "Hełm", "pancerz": 2},
+    "Napierśnik płytowy": {"typ": "Napierśnik", "pancerz": 4},
+    "Spodnie płytowe": {"typ": "Spodnie", "pancerz": 3},
+    "Buty płytowe": {"typ": "Buty", "pancerz": 1},
     "Symbol święty": {"typ": "Przedmiot", "opis": "Używany przez Paladynów"},
     "Topór bojowy": {"typ": "Broń", "obrażenia": "1k10"},
-    "Zbroja łańcuchowa": {"typ": "Pancerz", "pancerz": 4},
+    "Hełm łańcuchowy": {"typ": "Hełm", "pancerz": 1},
+    "Napierśnik łańcuchowy": {"typ": "Napierśnik", "pancerz": 3},
+    "Spodnie łańcuchowe": {"typ": "Spodnie", "pancerz": 2},
+    "Buty łańcuchowe": {"typ": "Buty", "pancerz": 1},
     "Różdżka": {"typ": "Broń", "obrażenia": "1k4", "magia": True},
     "Księga zaklęć": {"typ": "Przedmiot", "magia": True},
     "Szaty maga": {"typ": "Pancerz", "pancerz": 1, "magia": True},
     "Miecz krótki": {"typ": "Broń", "obrażenia": "1k6"},
-    "Lekka zbroja": {"typ": "Pancerz", "pancerz": 3}
+    "Hełm skórzany": {"typ": "Hełm", "pancerz": 1},
+    "Napierśnik skórzany": {"typ": "Napierśnik", "pancerz": 2},
+    "Spodnie skórzane": {"typ": "Spodnie", "pancerz": 1},
+    "Buty skórzane": {"typ": "Buty", "pancerz": 1}
 }
 
 # Funkcja do wyświetlania informacji o przedmiocie

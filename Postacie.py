@@ -5,21 +5,29 @@ import ai
 # Klasa bazowa dla postaci
 class Postac:
     # Inicjalizacja postaci
-    def __init__(self, imie, typ, sila, zrecznosc, inteligencja, charyzma, lvl=1, gatunek=None, x=0, y=0, xp=0, hp=100, pancerz = 0):
+    def __init__(self, imie, typ, sila, zrecznosc, inteligencja, charyzma, lvl=1, gatunek=None, x=0, y=0, xp=0, hp=100, bron=None, napiersnik=None, hełm=None, spodnie=None, buty=None):
         self.imie = imie
         self.typ = typ
-        self.sila = sila
+        self.sila = sila + (bron.sila if bron else 0)
         self.zrecznosc = zrecznosc
         self.inteligencja = inteligencja
         self.charyzma = charyzma
         self.ekwipunek = []
+        self.bron = bron
+        self.napiersnik = napiersnik
+        self.hełm = hełm
+        self.spodnie = spodnie
+        self.buty = buty
         self.lvl = lvl
         self.gatunek = gatunek
         self.x = x
         self.y = y
         self.xp = xp
         self.hp = hp
-        self.pancerz = pancerz
+        self.pancerz = (0 + (napiersnik.pancerz if napiersnik else 0) +
+                        (hełm.pancerz if hełm else 0) +
+                        (spodnie.pancerz if spodnie else 0) +
+                        (buty.pancerz if buty else 0))
         self.ostatnia_wioska = None
 
     # Reprezentacja tekstowa postaci
@@ -28,6 +36,87 @@ class Postac:
         if self.gatunek:
             base_info += f", Gatunek: {self.gatunek}"
         return base_info
+
+    def zaloz_przedmiot(self, przedmiot_nazwa):
+        if przedmiot_nazwa in przedmioty_info:
+            przedmiot = przedmioty_info[przedmiot_nazwa]
+            typ_przedmiotu = przedmiot["typ"]
+            if typ_przedmiotu == "Broń":
+                self.bron = przedmiot_nazwa
+            elif typ_przedmiotu == "Hełm":
+                self.hełm = przedmiot_nazwa
+            elif typ_przedmiotu == "Napierśnik":
+                self.napiersnik = przedmiot_nazwa
+            elif typ_przedmiotu == "Spodnie":
+                self.spodnie = przedmiot_nazwa
+            elif typ_przedmiotu == "Buty":
+                self.buty = przedmiot_nazwa
+            else:
+                print(f"Nie można założyć przedmiotu typu {typ_przedmiotu}.")
+                return
+            self.ekwipunek.remove(przedmiot_nazwa)
+            print(f"{self.imie} założył {przedmiot_nazwa}.")
+            self.aktualizuj_pancerz()
+        else:
+            print(f"Nieznany przedmiot: {przedmiot_nazwa}")
+
+    def zdejmij_przedmiot(self, typ_przedmiotu):
+        if typ_przedmiotu == "Broń":
+            if self.bron:
+                self.ekwipunek.append(self.bron)
+                print(f"{self.imie} zdjął {self.bron}.")
+                self.bron = None
+            else:
+                print(f"{self.imie} nie ma założonej broni.")
+                return
+        elif typ_przedmiotu == "Hełm":
+            if self.hełm:
+                self.ekwipunek.append(self.hełm)
+                print(f"{self.imie} zdjął {self.hełm}.")
+                self.hełm = None
+            else:
+                print(f"{self.imie} nie ma założonego hełmu.")
+                return
+        elif typ_przedmiotu == "Napierśnik":
+            if self.napiersnik:
+                self.ekwipunek.append(self.napiersnik)
+                print(f"{self.imie} zdjął {self.napiersnik}.")
+                self.napiersnik = None
+            else:
+                print(f"{self.imie} nie ma założonego napierśnika.")
+                return
+        elif typ_przedmiotu == "Spodnie":
+            if self.spodnie:
+                self.ekwipunek.append(self.spodnie)
+                print(f"{self.imie} zdjął {self.spodnie}.")
+                self.spodnie = None
+            else:
+                print(f"{self.imie} nie ma założonych spodni.")
+                return
+        elif typ_przedmiotu == "Buty":
+            if self.buty:
+                self.ekwipunek.append(self.buty)
+                print(f"{self.imie} zdjął {self.buty}.")
+                self.buty = None
+            else:
+                print(f"{self.imie} nie ma założonych butów.")
+                return
+        else:
+            print(f"Nieznany typ przedmiotu: {typ_przedmiotu}")
+            return
+        self.aktualizuj_pancerz()
+
+    def aktualizuj_pancerz(self):
+        pancerz = 0
+        if self.napiersnik:
+            pancerz += przedmioty_info[self.napiersnik]["pancerz"]
+        if self.hełm:
+            pancerz += przedmioty_info[self.hełm]["pancerz"]
+        if self.spodnie:
+            pancerz += przedmioty_info[self.spodnie]["pancerz"]
+        if self.buty:
+            pancerz += przedmioty_info[self.buty]["pancerz"]
+        self.pancerz = pancerz
 
 # Klasa dla postaci sterowanych przez AI
 class AICharacter(Postac):
@@ -43,7 +132,7 @@ class AICharacter(Postac):
     # Metoda statyczna do tworzenia postaci AI
     @staticmethod
     def ai_wybiera_postac():
-        dostepne_postacie = [klasa for klasa in postacie_map.keys() if klasa != "npc"]
+        dostepne_postacie = [klasa for klasa in postacie_map.keys() if klasa not in ["npc", "wrog", "Smok"]]
         wybrana_nazwa_postaci = random.choice(dostepne_postacie)
         defaults = class_defaults[wybrana_nazwa_postaci]
         imie = "AI_" + wybrana_nazwa_postaci
@@ -136,3 +225,5 @@ wrogowie = {
     "Troll": {"prawdopodobienstwo": 0.1, "sila": (12, 14), "zrecznosc": (6, 8), "inteligencja": (3, 5), "charyzma": (2, 4)},
     "Wilkołak": {"prawdopodobienstwo": 0.05, "sila": (15, 17), "zrecznosc": (12, 14), "inteligencja": (5, 7), "charyzma": (4, 6)}
 }
+
+
