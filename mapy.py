@@ -20,6 +20,11 @@ TERRAIN_SYMBOLS = {
     TERRAIN_ID["Rzeka"]: "〰️"
 }
 
+TERRAIN_NAME = {v: k for k, v in TERRAIN_ID.items()}
+
+def nazwa_terenu(pole):
+    return TERRAIN_NAME.get(pole, "Nieznany teren")
+
 # Funkcja do generowania mapy
 def generuj_mape(szerokosc, wysokosc):
     mapa = []
@@ -56,6 +61,17 @@ def wyswietl_mape(mapa, postac=None, ai_postac=None):
             else:
                 print(TERRAIN_SYMBOLS[teren], end="")
         print()
+
+def znajdz_wioski(mapa):
+    wioski = []
+    for y, wiersz in enumerate(mapa):
+        for x, teren in enumerate(wiersz):
+            if teren == TERRAIN_ID["Wioska"]:
+                wioski.append((x, y))
+    return wioski
+
+def czy_w_wiosce(postac, mapa):
+    return mapa[postac.y][postac.x] == TERRAIN_ID["Wioska"]
 
 szerokosc_mapy = 40
 wysokosc_mapy = 20

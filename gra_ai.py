@@ -18,23 +18,38 @@ def get_reward(mapa, x, y):
         return -1
 
 # Główna funkcja gry
-def start_game(postac):
+def start_game(postac, mapa):
     # AI wybiera postać
     ai_postac = p.AICharacter.ai_wybiera_postac()
     print("\nAI wybrało postać:")
     print(ai_postac)
     print(f"Ekwipunek: {', '.join(ai_postac.ekwipunek)}")
 
-    # Generowanie mapy
-    szerokosc_mapy = 40
-    wysokosc_mapy = 20
-    mapa = mapy.generuj_mape(szerokosc_mapy, wysokosc_mapy)
+    szerokosc_mapy = len(mapa[0])
+    wysokosc_mapy = len(mapa)
 
-    # Ustawienie początkowych pozycji postaci
-    postac.x = 5
-    postac.y = 5
-    ai_postac.x = 10
-    ai_postac.y = 10
+    # Ustawienie początkowych pozycji postaci na wioskę z tej mapy!
+    wioski = mapy.znajdz_wioski(mapa)
+    if wioski:
+        start_x, start_y = random.choice(wioski)
+        postac.x = start_x
+        postac.y = start_y
+        postac.ostatnia_wioska = (start_x, start_y)
+    else:
+        postac.x = 0
+        postac.y = 0
+        postac.ostatnia_wioska = (0, 0)
+
+    # To samo dla AI
+    if wioski:
+        ai_x, ai_y = random.choice(wioski)
+        ai_postac.x = ai_x
+        ai_postac.y = ai_y
+        ai_postac.ostatnia_wioska = (ai_x, ai_y)
+    else:
+        ai_postac.x = 0
+        ai_postac.y = 0
+        ai_postac.ostatnia_wioska = (0, 0)
 
     print("\nRozpoczyna się gra...")
     while True:
@@ -51,9 +66,16 @@ def start_game(postac):
             funkcje.zarzadzaj_ekwipunkiem(postac)
             continue
 
-        # Wykonanie ruchu gracza
+        
+
         wrog, ruch_wykonany = funkcje.porusz_sie(postac, mapa, kierunek)
-        if wrog:
+        # Wykonanie ruchu gracza
+        x, y = postac.x, postac.y
+        pole = mapa[y][x]
+        nazwa_pola = mapy.nazwa_terenu(pole)
+        if nazwa_pola == "Wioska":
+           funkcje.quest(nazwa_pola)
+        elif wrog:
             print("\nZaatakował cię wróg!")
             print(wrog)
             wynik_walki = funkcje.atakuj_przekonaj_ucieknij(postac, wrog)
@@ -64,6 +86,8 @@ def start_game(postac):
             elif wynik_walki == "ucieczka":
                 print(f"{postac.imie} uciekł!")
             continue  # Przejście do następnej iteracji pętli
+        
+        
 
         # Określenie stanu AI
         state = get_state(ai_postac.x, ai_postac.y, szerokosc_mapy, wysokosc_mapy)
@@ -104,7 +128,7 @@ def start_game(postac):
                     reward = -2
             elif ai_action == 1:
                 ai_info += "\nAI próbuje przekonać!"
-                wynik_przekonania = funkcje.przekonaj(ai_postac, wrog_ai)
+                wynik_przekonania = funkcje.ai_atakuj_przekonaj_ucieknij(ai_postac, wrog_ai)
                 if wynik_przekonania:
                     ai_info += "\nAI przekonało wroga!"
                     reward = 5
@@ -145,4 +169,5 @@ def start_game(postac):
 # Uruchomienie gry
 if __name__ == "__main__":
     postac = p.AICharacter.ai_wybiera_postac()
-    start_game(postac)
+    mapa = mapy.generuj_mape(40, 20)  # Przykładowe wymiary mapy
+    start_game(postac, mapa)

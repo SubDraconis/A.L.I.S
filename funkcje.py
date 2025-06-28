@@ -136,8 +136,8 @@ def atakuj_przekonaj_ucieknij(postac, wrog):
                         postac.x, postac.y = postac.ostatnia_wioska
                         print(f"{postac.imie} odradza się w wiosce ({postac.x}, {postac.y})!")
                     else:
-                        postac.x = 5
-                        postac.y = 5
+                        postac.x = 0
+                        postac.y = 0
                         print(f"{postac.imie} odradza się w punkcie startowym ({postac.x}, {postac.y})!")
 
                     postac.lvl = max(1, postac.lvl // 2)
@@ -214,8 +214,8 @@ def ai_atakuj_przekonaj_ucieknij(postac, wrog):
                     postac.x, postac.y = postac.ostatnia_wioska
                     print(f"{postac.imie} odradza się w wiosce ({postac.x}, {postac.y})!")
                 else:
-                    postac.x = 5
-                    postac.y = 5
+                    postac.x = 0
+                    postac.y = 0
                     print(f"{postac.imie} odradza się w punkcie startowym ({postac.x}, {postac.y})!")
 
                 postac.lvl = max(1, postac.lvl // 2)
@@ -304,12 +304,15 @@ def zarzadzaj_ekwipunkiem(postac):
     akcja = input("\nCo chcesz zrobić? (załóż/zdejmij/nic): ").lower()
 
     if akcja == "załóż":
-        indeks = int(input("Podaj numer przedmiotu do założenia: ")) - 1
-        if 0 <= indeks < len(postac.ekwipunek):
-            przedmiot = postac.ekwipunek[indeks]
-            postac.zaloz_przedmiot(przedmiot)
-        else:
-            print("Nieprawidłowy numer przedmiotu.")
+        try:
+            indeks = int(input("Podaj numer przedmiotu do założenia: ")) - 1
+            if 0 <= indeks < len(postac.ekwipunek):
+                przedmiot = postac.ekwipunek[indeks]
+                postac.zaloz_przedmiot(przedmiot)
+            else:
+                print("Nieprawidłowy numer przedmiotu.")
+        except ValueError:
+            print("To nie jest liczba!")
     elif akcja == "zdejmij":
         typ_przedmiotu = input("Podaj typ przedmiotu do zdjęcia (Broń, Hełm, Napierśnik, Spodnie, Buty): ").capitalize()
         postac.zdejmij_przedmiot(typ_przedmiotu)
@@ -340,6 +343,18 @@ def ai_zarzadzaj_ekwipunkiem(postac):
             postac.zdejmij_przedmiot(typ_przedmiotu)
     elif akcja == "nic":
         return
+
+def quest(lokalizacja):
+    if lokalizacja == "Wioska":
+        print("Podchodzi do ciebie burmiszcz i mówi:")
+        quest_wybrany = random.choice(list(przedmioty.questy.values()))
+        odpowiedz = input(f"czy przyjmujesz to zadanie: {quest_wybrany['tekst']} a nagroda to {quest_wybrany['nagroda']}").lower()
+        if odpowiedz == "tak":
+            przedmioty.przyjete_questy.append(quest_wybrany)
+            return True
+        else:
+            print("Nie przyjąłeś propozycji")
+            return False
 
 # Testowanie funkcji
 if __name__ == '__main__':

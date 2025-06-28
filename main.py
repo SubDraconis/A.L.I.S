@@ -4,6 +4,8 @@ import Postacie as p
 import gra_ai
 import drugi_gracz
 import samodzielna_gra
+import mapy
+import random
 
 #--- Główna część programu ---
 
@@ -19,7 +21,12 @@ for klasa, defaults in p.class_defaults.items():
                 print(f"- {atrybut}: {wartosc}")
 
 # Wybór postaci przez gracza
-wybor = input("\nWybierz postać (Paladyn, Wojownik, Mag, Mieszany): ").strip().lower()
+while True:
+    wybor = input("\nWybierz postać (Paladyn, Wojownik, Mag, Mieszany): ").strip().capitalize()
+    if wybor in ["Paladyn", "Wojownik", "Mag", "Mieszany"]:
+        break
+    else:
+        print("Podaj poprawną nazwę postaci!")
 
 Wybrana_klasa = p.postacie_map.get(wybor)
 
@@ -48,15 +55,41 @@ if Wybrana_klasa:
 else:
     print("Nieprawidłowy wybór postaci!")
 
-# Wybór trybu gry
-tryb_gry = input("\n Wybierz tryb gry (1 - Z AI, 2 - Z drugim graczem 3 - Sam ): ")
+# Generowanie mapy
+szerokosc_mapy = 40
+wysokosc_mapy = 20
+mapa = mapy.generuj_mape(szerokosc_mapy, wysokosc_mapy)
 
-if tryb_gry == "1":
-    gra_ai.start_game(postac)
-elif tryb_gry == "2":
-    drugi_gracz.start_game(postac)
-elif tryb_gry == "3":
-    samodzielna_gra.start_game(postac)
+# Znajdź losową wioskę
+wioski = mapy.znajdz_wioski(mapa)
+if wioski:
+    start_x, start_y = random.choice(wioski)
+    postac.x = start_x
+    postac.y = start_y
+    postac.ostatnia_wioska = (start_x, start_y)
 else:
-    print("Nieprawidłowy wybór trybu gry!")
+    # fallback jeśli nie ma wioski
+    postac.x = 0
+    postac.y = 0
+    postac.ostatnia_wioska = (0, 0)
+
+# Wybór trybu gry
+while True:
+    try:
+        tryb_gry = int(input("Wybierz tryb gry (1 - Z AI, 2 - Z drugim graczem, 3 - Sam): "))
+        if tryb_gry in [1, 2, 3]:
+            break
+        else:
+            print("Podaj liczbę 1, 2 lub 3.")
+    except ValueError:
+        print("Podaj poprawną liczbę!")
+
+if tryb_gry == 1:
+    gra_ai.start_game(postac, mapa)
+elif tryb_gry == 2:
+    drugi_gracz.start_game(postac, mapa)
+elif tryb_gry == 3:
+    samodzielna_gra.start_game(postac, mapa)
+
+
 

@@ -1,3 +1,5 @@
+import random
+
 # Słownik z informacjami o przedmiotach
 przedmioty_info = {
     "Miecz": {"typ": "Broń", "obrażenia": "1k6"},
@@ -31,3 +33,10 @@ def wyswietl_info_przedmiotu(nazwa_przedmiotu):
             print(f"    - {atrybut}: {wartosc}")
     else:
         print(f"  Nieznany przedmiot: {nazwa_przedmiotu}")
+
+questy = {
+    "1": {"tekst": "Moja córka została porwana przez gobliny, uratuj ją", "nagroda": random.randint(100, 1000)},
+    "2": {"tekst": f"Znajdź {random.choice(list(przedmioty_info))}", "nagroda": random.randint(100, 500)},
+    "3": {"tekst": "Zabij smoka i przynieś jego głowę", "nagroda": random.randint(10000, 100000)}
+}
+przyjete_questy = []
