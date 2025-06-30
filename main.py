@@ -22,6 +22,20 @@ for klasa, defaults in p.class_defaults.items():
 
 # Wybór postaci przez gracza
 while True:
+    wczytanie = input("\nCzy chcesz wczytać postać z pliku? (tak/nie): ").strip().lower()
+    if wczytanie == "tak":
+        imie_postaci = input("Podaj imię postaci do wczytania: ").strip()
+        postac = p.wczytaj_postac_z_pliku(imie_postaci)
+        if postac:
+            print(f"\nWczytano postać: {postac}")
+            break
+        else:
+            print("Nie udało się wczytać postaci. Spróbuj ponownie.")
+    elif wczytanie == "nie":
+        print("Wybierz klasę postaci:")
+        break
+    else:
+        print("Podaj 'tak' lub 'nie'!")
     wybor = input("\nWybierz postać (Paladyn, Wojownik, Mag, Mieszany): ").strip().capitalize()
     if wybor in ["Paladyn", "Wojownik", "Mag", "Mieszany"]:
         break

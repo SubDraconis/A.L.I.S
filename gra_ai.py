@@ -59,11 +59,22 @@ def start_game(postac, mapa):
         print(ai_postac)
 
         # Pobieranie ruchu od gracza
-        kierunek = input("\nPodaj kierunek ruchu (góra, dół, lewo, prawo, ekwipunek, koniec): ").lower()
+        kierunek = input("\nPodaj kierunek ruchu (góra, dół, lewo, prawo, ekwipunek, zapisz, wczytaj, koniec): ").lower()
         if kierunek == "koniec":
             break
         elif kierunek == "ekwipunek":
             funkcje.zarzadzaj_ekwipunkiem(postac)
+            continue
+        elif kierunek == "zapisz":
+            funkcje.zapisz_gre(postac, mapa, filename="save_ai.json")
+            print("Gra została zapisana.")
+            continue
+        elif kierunek == "wczytaj":
+            dane = funkcje.wczytaj_gre(filename="save_ai.json")
+            # Odtwórz postać i mapę na podstawie danych
+            postac.__dict__.update(dane["postac"])
+            mapa = dane["mapa"]
+            print("Gra została wczytana.")
             continue
 
         

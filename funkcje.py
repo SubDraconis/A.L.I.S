@@ -3,6 +3,7 @@ import Postacie as p
 import ai
 import mapy
 import random
+import json
 
 # Funkcja do poruszania się postaci
 def porusz_sie(postac, mapa, kierunek):
@@ -355,6 +356,35 @@ def quest(lokalizacja):
         else:
             print("Nie przyjąłeś propozycji")
             return False
+
+# Funkcja do zapisywania stanu gry
+def zapisz_gre(postac, mapa, filename="save.json"):
+    dane = {
+        "postac": {
+            "imie": postac.imie,
+            "typ": postac.typ,
+            "sila": postac.sila,
+            "zrecznosc": postac.zrecznosc,
+            "inteligencja": postac.inteligencja,
+            "charyzma": postac.charyzma,
+            "lvl": postac.lvl,
+            "xp": postac.xp,
+            "hp": postac.hp,
+            "x": postac.x,
+            "y": postac.y,
+            "ekwipunek": postac.ekwipunek,
+            "ostatnia_wioska": postac.ostatnia_wioska
+        },
+        "mapa": mapa
+    }
+    with open(filename, "w") as f:
+        json.dump(dane, f)
+    print("Gra została zapisana.")
+
+def wczytaj_gre(filename="save.json"):
+    with open(filename, "r") as f:
+        dane = json.load(f)
+    return dane
 
 # Testowanie funkcji
 if __name__ == '__main__':
